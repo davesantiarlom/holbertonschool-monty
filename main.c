@@ -23,9 +23,9 @@ int main(int argc, char **argv){
     open_file = fopen(file, "r");
     if (open_file == NULL){
         printf("Error: Can't open file %s\n", file);
-		error_exit(stack);
+		error_exit(&stack);
 	}
-    read = getline(&line, size, file);
+    read = getline(&line, &size, file);
     while (read != -1){
         op_code = strtok(line, "\n\t");
         if (op_code == NULL || op_code[0] == '#'){
@@ -35,7 +35,7 @@ int main(int argc, char **argv){
         operation = get_operation(op_code);
         if(operation == NULL){
             printf("L%d unknown instruction %s\n", count, op_code);
-            error_exit(stack);
+            error_exit(&stack);
         }
         operation(stack, count);
         count++;
