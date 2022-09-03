@@ -1,20 +1,15 @@
 #include "monty.h"
 /**
-  * pall - print the stack
-  * @st_stack: The stack
-  * @linu: line of code
-  * Return: nothing
-  */
-void pall(stack_t **st_stack, unsigned int linu)
-{
-	stack_t *save = *st_stack;
-
-	(void) linu;
-	if (*st_stack == NULL)
-		return;
-	while (save != NULL)
-	{
-		printf("%d\n", save->n);
-		save = save->next;
+ * pall - Print all values in the stack
+ * @stack: Double pointer to the top of the stack
+ * @line_num: The line of the file the command was found
+ **/
+void pall(stack_t **stack, unsigned int line_num){
+	stack_t *walker;
+	(void) line_num;
+	walker = *stack;
+	while (walker != NULL){
+		printf("%d\n", walker->n);
+		walker = walker->next;
 	}
 }

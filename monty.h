@@ -2,14 +2,12 @@
 #define MONTY_H
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <ctype.h>
-#include <sys/types.h>
-#include <errno.h>
-#include <sys/stat.h>
 #include <fcntl.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <ctype.h>
+
 extern int num;
 
 /**
@@ -42,19 +40,29 @@ typedef struct instruction_s
         void (*f)(stack_t **stack, unsigned int line_number);
 } instruction_t;
 
-void push(stack_t **st_stack, unsigned int linu);
-void pall(stack_t **st_stack, unsigned int linu);
-void pint(stack_t **st_stack, unsigned int linu);
-void pop(stack_t **st_stack, unsigned int linu);
-void swap(stack_t **st_stack, unsigned int linu);
-void add(stack_t **st_stack, unsigned int linu);
-void nop(stack_t **st_stack, unsigned int linu);
-void monty(char **av);
-void tokenize(char **buffer, char ***tokens, ssize_t r_line);
-void opcode_choose(stack_t **st_stack, char ***tokens, unsigned int linu);
-void free_tokens(char ***tokens);
-void free_stack(stack_t *st_stack);
-void check_number(char *n, unsigned int line_number);
-void (*choose_opcode(char *code))(stack_t **st_stack, unsigned int linu);
+/**
+ * struct op_ret_queue_s - Return value of opcodes and if list is stack/queue
+ * @opcode_return: Return value of the void opcode functions
+ * @queue_val: 1 if list is a queue, 0 if it's a stack
+ **/
+typedef struct op_ret_queue_s{
+	int opcode_return;
+	int queue_val;
+} opret_q;
+extern opret_q ret_and_q;
+
+void push(stack_t **stack, unsigned int line_num);
+void pall(stack_t **stack, unsigned int line_num);
+void pint(stack_t **stack, unsigned int line_num);
+void pop(stack_t **stack, unsigned int line_num);
+void swap(stack_t **stack, unsigned int line_num);
+void add(stack_t **stack, unsigned int line_num);
+void add_node(stack_t **stack, int push_value);
+void add_node_end(stack_t **stack, int push_value);
+char *find_command(char *line, stack_t **stack, unsigned int line_num);
+int check_codes(char *command, stack_t **stack, size_t line_num);
+int int_check(char *push_arg);
+void free_and_exit(char *line, FILE *file, stack_t *stack);
+void free_stack(stack_t *stack);
 
 #endif

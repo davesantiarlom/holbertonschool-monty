@@ -1,82 +1,88 @@
 #include "monty.h"
 
 /**
-  * main - start the monty interpreter
-  * @argc: argument count
-  * @argv: argument vector
-  * Return: 0 in success exit or different to 0 in unsuccess
-  */
-int main(int argc, char **argv){
-	if (argc == 2)
-		monty(argv);
-	else{
-		fprintf(stderr, "USAGE: monty file\n");
+ * main - Start in main, always
+ * @argc: The number of arguments passed to program
+ * @argv: The strings passed to the program
+ * Return: 1 if reaches end of the file, exit with EXIT_FAILURE
+ * if any opcode fails
+ **/
+int main(int argc, char *argv[]){
+	FILE *file;
+	char *line = NULL, *command;
+	size_t size=0, line_num = 1;
+	stack_t *stack = NULL;
+	ssize_t read = 0;
+	if (argc != 2){
+		printf("usage: monty file\n");
 		exit(EXIT_FAILURE);
 	}
-	return (EXIT_SUCCESS);
+	file = fopen(argv[1], "r");
+	if (file == NULL){
+		printf("Error: Can't open file %s\n", argv[1]);
+		exit(EXIT_FAILURE);
+	}
+	read = getline(&line, &size, file);
+	while (read != -1){
+		command = find_command(line, &stack, line_num);
+		if (strcmp(command, "nop"))
+			check_codes(command, &stack, line_num);
+		if (ret_and_q.opcode_return != 0){
+			free_and_exit(line, file, stack);
+		}
+		line_num++;
+		read = getline(&line, &size, file);
+	}
+	free_stack(stack);
+	free(line);
+	fclose(file);
+	return (0);
 }
 
 /**
-  * monty - Monty Interpreter
-  * @av: argument vector
-  * Return: nothing
-  */
-void monty(char **argv){
-	char *file = argv[1], *buffer = NULL, **tokens = NULL;
-	size_t len = 0, linu = 1;
-	ssize_t r_line;
-	stack_t *st_stack = NULL;
-	FILE *open_f;
-	open_f = fopen(file, "r");
-	if (open_f == NULL){
-		fprintf(stderr, "Error: Can't open file %s\n", file);
-		exit(EXIT_FAILURE);
-	}
-
-	for (linu = 1; (r_line = getline(&buffer, &len, open_f)) != -1; linu++){
-		tokenize(&buffer, &tokens, r_line);
-		if (tokens != NULL)
-			opcode_choose(&st_stack, &tokens, linu);
-		free_tokens(&tokens);
-	}
-	fclose(open_f);
-	if (buffer != NULL)
-		free(buffer);
-	free_stack(st_stack);
-}
-
-/**
-  * tokenize - start the monty interpreter
-  * @buffer: buffer where will store the data line
-  * @tokens: where the opcode will be stored
-  * @r_line: number of characters read it
-  * Return: nothing
-  */
-void tokenize(char **buffer, char ***tokens, ssize_t r_line){
-	size_t i, j, number;
-	int f;
-	char *token = NULL, *delim = " \n\t";
-
-	if (r_line > 0){
-		for (i = 0; (*buffer)[i] == ' ' || (*buffer)[i] == '\t'; i++){
-			if ((*buffer)[i + 1] == '\n')
-				return;
+ * find_command - Parse the line to find the given opcode
+ * @line: Line grabbed from monty file
+ * @stack: Double pointer pointing to top of stack/queue
+ * @line_num: Line number in the file the line was on
+ * Return: The name of the command found
+ **/
+char *find_command(char *line, stack_t **stack, unsigned int line_num){
+	char *command, *push_arg;
+	command = strtok(line, "\n\t\r ");
+	if (command == NULL || command[0] == '#')
+		command = "nop";
+	if (strcmp(command, "push") == 0){
+		command = "nop";
+		push_arg = strtok(NULL, "\n \t\r");
+		if (int_check(push_arg) == 0){
+			if (ret_and_q.queue_val == 0)
+				add_node(stack, atoi(push_arg));
+			else
+				add_node_end(stack, atoi(push_arg));
+		}
+		else{
+			printf("L%u: usage: push integer\n", line_num);
+			ret_and_q.opcode_return = 1;
+			return (command);
 		}
 	}
-	if (**buffer != '\n'){
-		for (f = 0; (*buffer)[f] != '\0'; i++)
-			;
-		(*buffer)[f - 1] = '\0';	
-        token = strtok(*buffer, delim);
-        if (strcmp(token, "push") == 0)
-            number = 3;
-        else
-            number = 2;
-        *tokens = malloc(sizeof(char *) * number);
-        for (j = 0; token != NULL && j <= number - 2; j++){
-            (*tokens)[j] = token;
-            token = strtok(NULL, delim);
-        }
-        (*tokens)[j] = NULL;
+	return (command);
+}
+
+/**
+ * int_check - Check if the given argument to push is a valid integer or not
+ * @push_arg: The string argument found after the push opcode
+ * Return: 1 if it's not a valid integer, 0 if it is
+ **/
+int int_check(char *push_arg){
+	int i;
+	if (push_arg == NULL)
+		return (1);
+	i = 0;
+	while (push_arg[i] != '\0'){
+		if (isalpha(push_arg[i]))
+			return (1);
+		i++;
 	}
+	return (0);
 }

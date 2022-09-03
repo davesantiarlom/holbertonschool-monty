@@ -1,22 +1,21 @@
 #include "monty.h"
 /**
-  * swap - delete the top of the stack
-  * @st_stack: The stack
-  * @linu: line of code
-  * Return: nothing
-  */
-void swap(stack_t **st_stack, unsigned int linu){
-	stack_t *save;
-	int i;
-	if (*st_stack != NULL && (*st_stack)->next != NULL){
-		save = (*st_stack)->next;
-		i = (*st_stack)->n;
-
-		(*st_stack)->n = save->n;
-		save->n = i;
+ * swap - Put the second element on top of the stack, put the top element
+ * in the second position
+ * @stack: Double pointer to the top of the stack
+ * @line_num: The line of the file the command was found
+ **/
+void swap(stack_t **stack, unsigned int line_num){
+	stack_t *walker;
+	int tmp;
+	walker = *stack;
+	if (walker == NULL || walker->next == NULL){
+		printf("L%u: can't swap, stack too short\n", line_num);
+		ret_and_q.opcode_return = 1;
 	}
-	else{
-		fprintf(stderr, "L%u: can't swap, stack too short\n", linu);
-		exit(EXIT_FAILURE);
+	if (ret_and_q.opcode_return != 1){
+		tmp = walker->n;
+		walker->n = walker->next->n;
+		walker->next->n = tmp;
 	}
 }

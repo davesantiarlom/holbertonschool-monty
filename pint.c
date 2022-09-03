@@ -1,15 +1,15 @@
 #include "monty.h"
 /**
-  * pint - print the top of the stack
-  * @st_stack: The stack
-  * @linu: line of code
-  * Return: nothing
-  */
-void pint(stack_t **st_stack, unsigned int linu){
-	if (*st_stack != NULL)
-		printf("%d\n", (*st_stack)->n);
-	else{
-		fprintf(stderr, "L%u: can't pint, stack empty\n", linu);
-		exit(EXIT_FAILURE);
+ * pint - Print the top element of the stack
+ * @stack: Double pointer to the top of the stack
+ * @line_num: The line of the file the command was found
+ **/
+void pint(stack_t **stack, unsigned int line_num){
+	if (*stack == NULL){
+		printf("L%u: can't pint, stack empty\n", line_num);
+		ret_and_q.opcode_return = 1;
+	}
+	if (ret_and_q.opcode_return != 1){
+		printf("%d\n", (*stack)->n);
 	}
 }
