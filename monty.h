@@ -6,7 +6,11 @@
 #include <string.h>
 #include <unistd.h>
 #include <ctype.h>
-extern int sq_flag;
+#include <sys/types.h>
+#include <errno.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+extern int num;
 
 /**
  * struct stack_s - doubly linked list representation of a stack (or queue)
@@ -38,21 +42,19 @@ typedef struct instruction_s
         void (*f)(stack_t **stack, unsigned int line_number);
 } instruction_t;
 
-typedef void (*instruct_func)(stack_t **stack, unsigned int line_number);
-instruct_func get_operation(char *str);
-void push(stack_t **stack, unsigned int line_num);
-void pall(stack_t **stack, unsigned int line_num);
-void pint(stack_t **stack, unsigned int line_num);
-void pop(stack_t **stack, unsigned int line_num);
-void swap(stack_t **stack, unsigned int line_num);
-void add(stack_t **stack, unsigned int line_num);
-void nop(stack_t **stack, unsigned int line_num);
-void error_exit(stack_t **stack);
-void free_stack(stack_t *stack);
-int check_string(char *str);
-
-stack_t *add_node(stack_t **head, const int n);
-stack_t *add_node_end(stack_t **head, const int n);
-int delete_node(stack_t **head, unsigned int index);
+void push(stack_t **st_stack, unsigned int linu);
+void pall(stack_t **st_stack, unsigned int linu);
+void pint(stack_t **st_stack, unsigned int linu);
+void pop(stack_t **st_stack, unsigned int linu);
+void swap(stack_t **st_stack, unsigned int linu);
+void add(stack_t **st_stack, unsigned int linu);
+void nop(stack_t **st_stack, unsigned int linu);
+void monty(char **av);
+void tokenize(char **buffer, char ***tokens, ssize_t r_line);
+void opcode_choose(stack_t **st_stack, char ***tokens, unsigned int linu);
+void free_tokens(char ***tokens);
+void free_stack(stack_t *st_stack);
+void check_number(char *n, unsigned int line_number);
+void (*choose_opcode(char *code))(stack_t **st_stack, unsigned int linu);
 
 #endif

@@ -1,12 +1,11 @@
 #include "monty.h"
 /**
- * nop - literally does nothing
- * @stack: pointer to the top of the stack
- * @line_number: the index of the current line
- *
- */
-void nop(__attribute__ ((unused))stack_t **stack,
-	  __attribute__ ((unused))unsigned int line_number)
-{
-	;
+  * nop - do nothing
+  * @st_stack: The stack
+  * @linu: line of code
+  * Return: nothing
+  */
+void nop(stack_t **st_stack, unsigned int linu){
+	(void) st_stack;
+	(void) linu;
 }

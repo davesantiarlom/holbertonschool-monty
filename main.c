@@ -1,70 +1,82 @@
 #include "monty.h"
-int sq_flag = 0;
+
 /**
-  * main - an interpreter for Monty ByteCodes filesstart the monty interpreter
+  * main - start the monty interpreter
   * @argc: argument count
   * @argv: argument vector
-  * Return: 0 Success
+  * Return: 0 in success exit or different to 0 in unsuccess
   */
 int main(int argc, char **argv){
-    stack_t *stack = NULL;
-    instruct_func operation;
-    FILE *open_file;
-    char *file = argv[1], *line = NULL, *op_code = NULL;
-    size_t size = 0;
-    ssize_t read = 0;
-    int count = 1;
-
-    if (argc != 2){
-        printf("USAGE: monty file\n");
-        error_exit(&stack);
-    }
-    open_file = fopen(file, "r");
-    if (open_file == NULL){
-        printf("Error: Can't open file %s\n", file);
-		error_exit(&stack);
+	if (argc == 2)
+		monty(argv);
+	else{
+		fprintf(stderr, "USAGE: monty file\n");
+		exit(EXIT_FAILURE);
 	}
-    read = getline(&line, &size, open_file);
-    while (read != -1){
-        op_code = strtok(line, "\n\t");
-        if (op_code == NULL || op_code[0] == '#'){
-            count++;
-            continue;
-        }
-        operation = get_operation(op_code);
-        if(operation == NULL){
-            printf("L%d unknown instruction %s\n", count, op_code);
-            error_exit(&stack);
-        }
-        operation(&stack, count);
-        count++;
-    }
-    free(line);
-    if ((fclose(open_file)) == -1)
-        return(EXIT_FAILURE);
-    free_stack(stack);    
-    return(EXIT_SUCCESS);
+	return (EXIT_SUCCESS);
 }
 
 /**
- * error_exit - frees the stack and exits due to error
- * @stack: pointer to the head of the stack
- */
-void error_exit(stack_t **stack){
-	if (*stack)
-        free_stack(*stack);
-	exit(EXIT_FAILURE);
+  * monty - Monty Interpreter
+  * @av: argument vector
+  * Return: nothing
+  */
+void monty(char **argv){
+	char *file = argv[1], *buffer = NULL, **tokens = NULL;
+	size_t len = 0, linu = 1;
+	ssize_t r_line;
+	stack_t *st_stack = NULL;
+	FILE *open_f;
+	open_f = fopen(file, "r");
+	if (open_f == NULL){
+		fprintf(stderr, "Error: Can't open file %s\n", file);
+		exit(EXIT_FAILURE);
+	}
+
+	for (linu = 1; (r_line = getline(&buffer, &len, open_f)) != -1; linu++){
+		tokenize(&buffer, &tokens, r_line);
+		if (tokens != NULL)
+			opcode_choose(&st_stack, &tokens, linu);
+		free_tokens(&tokens);
+	}
+	fclose(open_f);
+	if (buffer != NULL)
+		free(buffer);
+	free_stack(st_stack);
 }
 
 /**
- * free_stack - free a list
- * @head: pointer to first node
- */
-void free_stack(stack_t *stack){
-	stack_t *tmp;
-	while (stack != NULL){
-		tmp = stack->next;
-		free(stack);
-		stack = tmp;
+  * tokenize - start the monty interpreter
+  * @buffer: buffer where will store the data line
+  * @tokens: where the opcode will be stored
+  * @r_line: number of characters read it
+  * Return: nothing
+  */
+void tokenize(char **buffer, char ***tokens, ssize_t r_line){
+	size_t i, j, number;
+	int f;
+	char *token = NULL, *delim = " \n\t";
+
+	if (r_line > 0){
+		for (i = 0; (*buffer)[i] == ' ' || (*buffer)[i] == '\t'; i++){
+			if ((*buffer)[i + 1] == '\n')
+				return;
+		}
+	}
+	if (**buffer != '\n'){
+		for (f = 0; (*buffer)[f] != '\0'; i++)
+			;
+		(*buffer)[f - 1] = '\0';	
+        token = strtok(*buffer, delim);
+        if (strcmp(token, "push") == 0)
+            number = 3;
+        else
+            number = 2;
+        *tokens = malloc(sizeof(char *) * number);
+        for (j = 0; token != NULL && j <= number - 2; j++){
+            (*tokens)[j] = token;
+            token = strtok(NULL, delim);
+        }
+        (*tokens)[j] = NULL;
 	}
 }

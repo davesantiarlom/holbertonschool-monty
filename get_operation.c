@@ -1,13 +1,13 @@
 #include "monty.h"
 
 /**
- * get_operation -  checks opcode and returns the correct function
- * @str: the opcode
- * Return: returns a function, or NULL on failure
- */
-instruct_func get_operation(char *str){
-	int i = 0;
-	instruction_t instruct[] = {
+  * choose_opcode - Choose the right opcode to exe
+  * @code: the string number
+  * Return: nothing
+  */
+void (*choose_opcode(char *code))(stack_t **stack, unsigned int line_number){
+	int i;
+	instruction_t opcodes[] = {
 		{"push", push},
 		{"pall", pall},
 		{"pint", pint},
@@ -15,37 +15,57 @@ instruct_func get_operation(char *str){
 		{"swap", swap},
 		{"add", add},
 		{"nop", nop},
-		{NULL, NULL},
-	};
-	while (instruct[i].f != NULL && strcmp(instruct[i].opcode, str) != 0){
-		i++;
-	}
-	return (instruct[i].f);
+		{NULL, NULL}};
+
+	for (i = 0; opcodes[i].opcode != NULL; i++)
+		if (strcmp(code, opcodes[i].opcode) == 0)
+			return (opcodes[i].f);
+	return (opcodes[i].f);
 }
 
 /**
- * check_string - checks if a string is a number
- * @str: string being passed
- *
- * Return: returns 1 if string is a number, 0 otherwise
- */
-int check_string(char *str)
-{
-	unsigned int i;
-
-	if (str == NULL)
-		return (0);
-	i = 0;
-	while (str[i])
-	{
-		if (str[0] == '-')
-		{
-			i++;
-			continue;
+  * opcode_choose - Choose the rigth op_code
+  * @st_stack: stack where will save the data
+  * @tokens: the token of the line read it beforly
+  * @linu: number of line
+  * Return: nothing
+  */
+void opcode_choose(stack_t **st_stack, char ***tokens, unsigned int linu){
+	void (*op_code)(stack_t **st_stack, unsigned int linu);
+	size_t i;
+	if (strcmp((*tokens)[0], "push") == 0){
+		for (i = 0; (*tokens)[i] != NULL; i++){
+			if (i == 1)
+				check_number((*tokens)[i], linu);
 		}
-		if (!isdigit(str[i]))
-			return (0);
-		i++;
+		if (i == 1 && (*tokens)[i] == NULL){
+			fprintf(stderr, "L%u: usage: push integer\n", linu);
+			exit(EXIT_FAILURE);
+		}
 	}
-	return (1);
+	op_code = choose_opcode((*tokens)[0]);
+	if (op_code != NULL)
+		op_code(st_stack, linu);
+	else{
+		fprintf(stderr, "L%u: unknown instruction %s\n", linu, (*tokens)[0]);
+		exit(EXIT_FAILURE);
+	}
+}
+/**
+  * check_number - Check if the string is a number
+  * @n: the string number
+  * @linu: number of line
+  * Return: nothing
+  */
+void check_number(char *n, unsigned int linu){
+	size_t i;
+	for (i = 0; n[i] != '\0'; i++){
+		if (i == 0 && n[i] == '-')
+			continue;
+		else if (!((n[i] >= '0' && n[i] <= '9') || (n[i] == '-'))){
+			fprintf(stderr, "L%u: usage: push integer\n", linu);
+			exit(EXIT_FAILURE);
+		}
+	}
+	num = atoi(n);
 }

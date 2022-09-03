@@ -1,22 +1,22 @@
 #include "monty.h"
 /**
- * swap - swap top of stack and second top of stack
- * @stack: pointer to linked list stack
- * @line_number: number of line opcode occurs on
- *
- */
-void swap(stack_t **stack, unsigned int line_number)
-{
-	stack_t *runner;
-	int tmp;
+  * swap - delete the top of the stack
+  * @st_stack: The stack
+  * @linu: line of code
+  * Return: nothing
+  */
+void swap(stack_t **st_stack, unsigned int linu){
+	stack_t *save;
+	int i;
+	if (*st_stack != NULL && (*st_stack)->next != NULL){
+		save = (*st_stack)->next;
+		i = (*st_stack)->n;
 
-	runner = *stack;
-	if (runner == NULL || runner->next == NULL)
-	{
-		printf("L%d: can't swap, stack too short\n", line_number);
-		error_exit(stack);
+		(*st_stack)->n = save->n;
+		save->n = i;
 	}
-	tmp = runner->n;
-	runner->n = runner->next->n;
-	runner->next->n = tmp;
+	else{
+		fprintf(stderr, "L%u: can't swap, stack too short\n", linu);
+		exit(EXIT_FAILURE);
+	}
 }

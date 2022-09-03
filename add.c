@@ -1,17 +1,23 @@
 #include "monty.h"
 /**
- * add - adds top of stack and second top of stack
- *
- * @stack: pointer to linked list stack
- * @line_number: number of line opcode occurs on
- */
-void add(stack_t **stack, unsigned int line_number)
-{
-	if (*stack == NULL || (*stack)->next == NULL)
-	{
-		printf("L%d: can't add, stack too short\n", line_number);
-		error_exit(stack);
+  * add - add the two top number of a stack
+  * @st_stack: The stack
+  * @linu: line of code
+  * Return: nothing
+  */
+void add(stack_t **st_stack, unsigned int linu){
+	stack_t *save;
+	int i;
+	if (*st_stack != NULL && (*st_stack)->next != NULL){
+		i = ((*st_stack)->n) + ((*st_stack)->next->n);
+		save = (*st_stack)->next;
+		free(*st_stack);
+		save->n = i;
+		save->prev = NULL;
+		*st_stack = save;
 	}
-	(*stack)->next->n += (*stack)->n;
-	pop(stack, line_number);
+	else{
+		fprintf(stderr, "L%u: can't add, stack too short\n", linu);
+		exit(EXIT_FAILURE);
+	}
 }
