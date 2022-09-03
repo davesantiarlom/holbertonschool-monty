@@ -1,5 +1,5 @@
 #include "monty.h"
-
+int sq_flag = 0;
 /**
   * main - an interpreter for Monty ByteCodes filesstart the monty interpreter
   * @argc: argument count

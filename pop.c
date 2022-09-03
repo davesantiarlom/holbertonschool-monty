@@ -1,10 +1,10 @@
 #include "monty.h"
 /**
- * _pop - delete item at top of stack
+ * pop - delete item at top of stack
  * @stack: pointer to linked list stack
  * @line_number: number of line opcode occurs on
  */
-void _pop(stack_t **stack, unsigned int line_number)
+void pop(stack_t **stack, unsigned int line_number)
 {
 	if (*stack == NULL)
 	{

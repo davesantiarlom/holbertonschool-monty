@@ -38,6 +38,8 @@ typedef struct instruction_s
         void (*f)(stack_t **stack, unsigned int line_number);
 } instruction_t;
 
+typedef void (*instruct_func)(stack_t **stack, unsigned int line_number);
+instruct_func get_operation(char *str);
 void push(stack_t **stack, unsigned int line_num);
 void pall(stack_t **stack, unsigned int line_num);
 void pint(stack_t **stack, unsigned int line_num);
@@ -45,9 +47,6 @@ void pop(stack_t **stack, unsigned int line_num);
 void swap(stack_t **stack, unsigned int line_num);
 void add(stack_t **stack, unsigned int line_num);
 void nop(stack_t **stack, unsigned int line_num);
-
-typedef void (*instruct_func)(stack_t **stack, unsigned int line_number);
-instruct_func get_operation(char *str);
 void error_exit(stack_t **stack);
 void free_stack(stack_t *stack);
 int check_string(char *str);

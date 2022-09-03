@@ -5,7 +5,7 @@
  * @str: the opcode
  * Return: returns a function, or NULL on failure
  */
-instruct_func get_op_func(char *str){
+instruct_func get_operation(char *str){
 	int i = 0;
 	instruction_t instruct[] = {
 		{"push", push},

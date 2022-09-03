@@ -1,11 +1,11 @@
 #include "monty.h"
 /**
- * _swap - swap top of stack and second top of stack
+ * swap - swap top of stack and second top of stack
  * @stack: pointer to linked list stack
  * @line_number: number of line opcode occurs on
  *
  */
-void _swap(stack_t **stack, unsigned int line_number)
+void swap(stack_t **stack, unsigned int line_number)
 {
 	stack_t *runner;
 	int tmp;
