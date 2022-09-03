@@ -8,10 +8,9 @@
   */
 int main(int argc, char **argv){
     stack_t *stack = NULL;
-    stack_t *tmp = NULL;
     instruct_func operation;
     FILE *open_file;
-    char *file = argv[0], *line = NULL, *op_code = NULL;
+    char *file = argv[1], *line = NULL, *op_code = NULL;
     size_t size = 0;
     ssize_t read = 0;
     int count = 1;
@@ -25,7 +24,7 @@ int main(int argc, char **argv){
         printf("Error: Can't open file %s\n", file);
 		error_exit(&stack);
 	}
-    read = getline(&line, &size, file);
+    read = getline(&line, &size, open_file);
     while (read != -1){
         op_code = strtok(line, "\n\t");
         if (op_code == NULL || op_code[0] == '#'){
@@ -37,11 +36,11 @@ int main(int argc, char **argv){
             printf("L%d unknown instruction %s\n", count, op_code);
             error_exit(&stack);
         }
-        operation(stack, count);
+        operation(&stack, count);
         count++;
     }
     free(line);
-    if ((fclose(file)) == -1) 
+    if ((fclose(open_file)) == -1)
         return(EXIT_FAILURE);
     free_stack(stack);    
     return(EXIT_SUCCESS);

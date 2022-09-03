@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <ctype.h>
 extern int sq_flag;
 
 /**
@@ -48,7 +49,7 @@ void nop(stack_t **stack, unsigned int line_num);
 typedef void (*instruct_func)(stack_t **stack, unsigned int line_number);
 instruct_func get_operation(char *str);
 void error_exit(stack_t **stack);
-void free_dlistint(stack_t *stack);
+void free_stack(stack_t *stack);
 int check_string(char *str);
 
 stack_t *add_node(stack_t **head, const int n);
