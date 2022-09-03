@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+extern int sq_flag;
 
 /**
  * struct stack_s - doubly linked list representation of a stack (or queue)
@@ -43,5 +44,15 @@ void pop(stack_t **stack, unsigned int line_num);
 void swap(stack_t **stack, unsigned int line_num);
 void add(stack_t **stack, unsigned int line_num);
 void nop(stack_t **stack, unsigned int line_num);
+
+typedef void (*instruct_func)(stack_t **stack, unsigned int line_number);
+instruct_func get_operation(char *str);
+void error_exit(stack_t **stack);
+void free_dlistint(stack_t *stack);
+int check_string(char *str);
+
+stack_t *add_node(stack_t **head, const int n);
+stack_t *add_node_end(stack_t **head, const int n);
+int delete_node(stack_t **head, unsigned int index);
 
 #endif
